@@ -1,6 +1,6 @@
 # Pizzería Mamma Mia!
 
-Hito 4 - Consumo de APIs con React | Desafío Latam - Fullstack JS
+Hito 5 - React Router I | Desafío Latam - Fullstack JS
 
 ## Accesos al proyecto
 
@@ -22,30 +22,53 @@ En el **Hito 3** el menú pasa a renderizarse dinámicamente con `.map()` desde 
 
 En el **Hito 4** las pizzas se obtienen desde una **API** (backend del material de apoyo) usando `useEffect` y `fetch`. `Home` carga el listado completo y el nuevo componente `Pizza` muestra el detalle de una pizza (por ahora fija: `p001`), al que se llega con el botón **Ver Más** de cualquier tarjeta.
 
-> El carrito se abre con el botón **🛒 Total** del Navbar. El monto de ese botón sigue siendo un valor fijo; el total real se muestra dentro del carrito.
+En el **Hito 5** la navegación pasa a hacerse con **React Router**: cada vista tiene su propia URL, los componentes de página se trasladan a la carpeta `pages`, y se agregan las páginas **Profile** y **NotFound** (404).
+
+| Ruta | Página |
+|---|---|
+| `/` | Home |
+| `/register` | Register |
+| `/login` | Login |
+| `/cart` | Cart |
+| `/pizza/p001` | Pizza |
+| `/profile` | Profile |
+| `/404` y cualquier ruta inexistente | NotFound |
+
+> El botón **🛒 Total** del Navbar lleva a `/cart`. El monto de ese botón sigue siendo un valor fijo; el total real se muestra dentro del carrito.
 
 ## Componentes
 
 ```
-App.jsx
-├── Navbar.jsx      → menú de navegación, variables `total` y `token`
-├── Home.jsx
-│   ├── Header.jsx  → título y descripción de la pizzería
-│   └── CardPizza.jsx (x6) → nombre, precio, ingredientes e imagen (vía props)
-├── Pizza.jsx       → detalle de una pizza obtenida desde la API (useEffect)
-├── Register.jsx    → formulario de registro con validaciones (useState)
-│   └── Message.jsx → alerta de éxito/error, visible solo cuando hay mensaje
-├── Login.jsx       → formulario de login con validaciones (useState)
-│   └── Message.jsx
-├── Cart.jsx        → carrito de compras: cantidades y total (useState)
-└── Footer.jsx      → derechos reservados
+src/
+├── main.jsx            → envuelve <App /> con <BrowserRouter>
+├── App.jsx             → Navbar + <Routes> + Footer
+├── components/
+│   ├── Navbar.jsx      → menú con <Link>, variables `total` y `token`
+│   ├── Header.jsx      → título y descripción de la pizzería
+│   ├── CardPizza.jsx   → tarjeta de pizza (vía props)
+│   ├── Message.jsx     → alerta de éxito/error
+│   └── Footer.jsx      → derechos reservados
+├── pages/
+│   ├── Home.jsx        → listado de pizzas desde la API (Header + CardPizza x6)
+│   ├── Pizza.jsx       → detalle de una pizza desde la API
+│   ├── Register.jsx    → formulario de registro (usa Message)
+│   ├── Login.jsx       → formulario de login (usa Message)
+│   ├── Cart.jsx        → carrito de compras: cantidades y total
+│   ├── Profile.jsx     → email del usuario y botón cerrar sesión
+│   └── NotFound.jsx    → página 404 con enlace al inicio
+├── utils/helpers.js
+└── pizzas.js
 ```
 
+- **main.jsx**: envuelve la aplicación con `BrowserRouter` de `react-router-dom`.
+- **App.jsx**: define las rutas con `Routes` y `Route`. La ruta `*` muestra `NotFound` para cualquier URL que no exista.
 - **pizzas.js**: datos locales. Exporta `pizzas` (desde el Hito 4 solo se usa para las imágenes de respaldo) y `pizzaCart` (simulación del carrito).
-- **Navbar.jsx**: botones Home y Total (siempre visibles) + Login/Register o Profile/Logout según la variable booleana `token`. El total se formatea con separador de miles usando `toLocaleString`. Recibe la prop `onNavigate` para cambiar la vista.
+- **Navbar.jsx**: enlaces con `Link` a Home, Profile, Login y Register, más el botón **🛒 Total** que lleva a `/cart`. Con `token` en `false` muestra Login/Register; con `true`, Logout. El enlace a Profile está siempre visible mientras la autenticación sea estática. El total se formatea con separador de miles usando `toLocaleString`.
+- **Profile.jsx**: muestra un email fijo (`usuario@pizzeria.cl`) y un botón Cerrar sesión, ambos estáticos por ahora.
+- **NotFound.jsx**: página 404 temática con un `Link` que vuelve a `/`.
 - **Home.jsx**: con `useEffect` y `fetch` consume `GET /api/pizzas`, guarda el resultado en el estado `pizzas` y renderiza un `CardPizza` por cada una. Muestra un mensaje mientras carga y otro si el backend no responde.
 - **Pizza.jsx**: con `useEffect` y `fetch` consume `GET /api/pizzas/p001` y muestra nombre, precio, ingredientes, imagen y descripción. El botón Añadir aún no tiene funcionalidad.
-- **CardPizza.jsx**: recibe `name`, `price`, `ingredients` e `img` por props, y renderiza un `<li>` por cada ingrediente.
+- **CardPizza.jsx**: recibe `id`, `name`, `price`, `ingredients` e `img` por props, y renderiza un `<li>` por cada ingrediente. El botón Ver Más es un `Link` a `/pizza/p001`.
 - **Cart.jsx**: guarda `pizzaCart` en el estado `cart` y muestra imagen, nombre, precio y cantidad de cada pizza. Los botones `+` y `-` cambian la cantidad y, al llegar a 0, la pizza se elimina del carrito. El total se calcula con `reduce`. El botón Pagar aún no tiene funcionalidad.
 - **Register.jsx**: estados `email`, `password` y `confirmPassword`; valida campos obligatorios, largo mínimo de 6 caracteres y que ambas contraseñas coincidan.
 - **Login.jsx**: estados `email` y `password`; valida campos obligatorios y largo mínimo de 6 caracteres.
@@ -56,6 +79,7 @@ App.jsx
 
 - [React 19](https://react.dev/)
 - [Vite](https://vitejs.dev/)
+- [React Router 7](https://reactrouter.com/) (`react-router-dom`)
 - [Bootstrap 5](https://getbootstrap.com/)
 
 ## Cómo correr el proyecto en local
@@ -110,7 +134,7 @@ Abre [http://localhost:5173](http://localhost:5173) en tu navegador.
   - Todos los campos obligatorios
   - Contraseña de al menos 6 caracteres
   - Muestra mensaje de éxito o de error al enviar
-- [x] Los botones Home, Login y Register del `Navbar` cambian la vista mostrada en `App.jsx` (estado `view`)
+- [x] Los botones Home, Login y Register del `Navbar` cambian la vista mostrada en `App.jsx` (estado `view`; desde el Hito 5 se reemplazó por React Router)
 
 ## Requerimientos del Hito 3
 
@@ -129,11 +153,21 @@ Abre [http://localhost:5173](http://localhost:5173) en tu navegador.
 - [x] `Pizza.jsx` utiliza el hook `useEffect` para consumir la API
 - [x] `Pizza.jsx` muestra nombre, precio, ingredientes, imagen y descripción
 
+## Requerimientos del Hito 5
+
+- [x] Instalación de `react-router-dom` y configuración con `BrowserRouter` en `main.jsx`
+- [x] `Home`, `Register`, `Login`, `Cart` y `Pizza` trasladados a la carpeta `pages`
+- [x] Rutas `/`, `/register`, `/login`, `/cart`, `/pizza/p001`, `/profile` y `/404`
+- [x] `NotFound` se muestra en cualquier ruta inexistente y tiene un enlace a `/`
+- [x] `Profile` muestra el email del usuario y un botón para cerrar sesión (estáticos)
+- [x] `Navbar` con enlaces `Link` a las rutas; el botón **🛒 Total** redirige a `/cart`
+
 ### Notas de implementación
+
+- `vercel.json` redirige todas las rutas a `index.html`, para que en Vercel funcione entrar directo o recargar en rutas como `/cart` o `/profile`.
 
 - La URL del backend se define en `API_URL`: por defecto el backend publicado en Render ([pizzeria-backend-laiv.onrender.com](https://pizzeria-backend-laiv.onrender.com/api/pizzas)), o el valor de la variable de entorno `VITE_API_URL` si está definida.
 - Las imágenes que entrega el backend (Firebase) responden error 402; si una imagen falla, `onError` la reemplaza por la imagen de respaldo de `pizzas.js` según el `id`.
-- `Home`, `Register`, `Login`, `Cart` y `Pizza` se mantienen activos y se navega entre ellos desde el `Navbar` (estado `view`), en lugar de dejarlos comentados en `App.jsx` como en el ejemplo del hito.
 - Las URLs de imágenes del material de apoyo responden error 402, por lo que en `pizzas.js` se reemplazaron por fotos de [Unsplash](https://unsplash.com/).
 
 ## Autor

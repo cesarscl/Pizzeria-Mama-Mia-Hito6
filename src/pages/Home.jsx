@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
-import Header from "./Header"
-import CardPizza from "./CardPizza"
+import Header from "../components/Header"
+import CardPizza from "../components/CardPizza"
 import { API_URL } from "../utils/helpers"
 
-const Home = ({ onViewPizza }) => {
+const Home = () => {
   const [pizzas, setPizzas] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
@@ -42,7 +42,6 @@ const Home = ({ onViewPizza }) => {
               price={pizza.price}
               ingredients={pizza.ingredients}
               img={pizza.img}
-              onViewMore={onViewPizza}
             />
           ))}
         </div>

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import Message from "./Message"
+import Message from "../components/Message"
 
 const Login = () => {
   const [email, setEmail] = useState("")

@@ -1,6 +1,7 @@
+import { Link } from "react-router-dom"
 import { formatPrice, handleImgError } from "../utils/helpers"
 
-const CardPizza = ({ id, name, price, ingredients, img, onViewMore }) => {
+const CardPizza = ({ id, name, price, ingredients, img }) => {
   return (
     <div className="col-12 col-md-6 col-lg-4 mb-4">
       <div className="card h-100 shadow-sm">
@@ -26,9 +27,10 @@ const CardPizza = ({ id, name, price, ingredients, img, onViewMore }) => {
           </p>
 
           <div className="d-flex justify-content-between mt-auto">
-            <button className="btn btn-outline-secondary btn-sm" onClick={onViewMore}>
+            {/* Por ahora la ruta del detalle es fija; en el siguiente hito será dinámica */}
+            <Link to="/pizza/p001" className="btn btn-outline-secondary btn-sm">
               Ver Más 👀
-            </button>
+            </Link>
             <button className="btn btn-dark btn-sm">Añadir 🛒</button>
           </div>
         </div>
