@@ -4,11 +4,12 @@ Hito 5 - React Router I | Desafío Latam - Fullstack JS
 
 ## Accesos al proyecto
 
-- Demo en vivo Hito 4 (Vercel): **[pizzeria-mama-mia-hito4.vercel.app](https://pizzeria-mama-mia-hito4.vercel.app/)**
+- Demo en vivo Hito 5 (Vercel): **[pizzeria-mama-mia-hito5.vercel.app](https://pizzeria-mama-mia-hito5.vercel.app/)**
+  - Rutas: [`/`](https://pizzeria-mama-mia-hito5.vercel.app/) · [`/register`](https://pizzeria-mama-mia-hito5.vercel.app/register) · [`/login`](https://pizzeria-mama-mia-hito5.vercel.app/login) · [`/cart`](https://pizzeria-mama-mia-hito5.vercel.app/cart) · [`/pizza/p001`](https://pizzeria-mama-mia-hito5.vercel.app/pizza/p001) · [`/profile`](https://pizzeria-mama-mia-hito5.vercel.app/profile) · [`/404`](https://pizzeria-mama-mia-hito5.vercel.app/404)
 - Backend / API (Render): **[pizzeria-backend-laiv.onrender.com](https://pizzeria-backend-laiv.onrender.com/api/pizzas)**
   - `GET /api/pizzas` → [listado de pizzas](https://pizzeria-backend-laiv.onrender.com/api/pizzas)
   - `GET /api/pizzas/p001` → [detalle de una pizza](https://pizzeria-backend-laiv.onrender.com/api/pizzas/p001)
-- Repositorio: **[cesarscl/Pizzeria-Mama-Mia-Hito4](https://github.com/cesarscl/Pizzeria-Mama-Mia-Hito4)**
+- Repositorio: **[cesarscl/Pizzeria-Mama-Mia-Hito5](https://github.com/cesarscl/Pizzeria-Mama-Mia-Hito5)**
 
 > El backend está en el plan gratuito de Render podria estar inactivo al mometo de la evaluacion
 
@@ -105,8 +106,8 @@ VITE_API_URL=http://localhost:5000
 Luego, en el frontend:
 
 ```bash
-git clone https://github.com/cesarscl/Pizzeria-Mama-Mia-Hito4.git
-cd Pizzeria-Mama-Mia-Hito4
+git clone https://github.com/cesarscl/Pizzeria-Mama-Mia-Hito5.git
+cd Pizzeria-Mama-Mia-Hito5
 npm install
 npm run dev
 ```
