@@ -2,30 +2,35 @@
 
 Hito 6 - Context API | Desafío Latam - Fullstack JS
 
-## Accesos al proyecto
+## Accesos
 
-- Demo en vivo Hito 5 (Vercel): **[pizzeria-mama-mia-hito5.vercel.app](https://pizzeria-mama-mia-hito5.vercel.app/)**
-  - Rutas: [`/`](https://pizzeria-mama-mia-hito5.vercel.app/) · [`/register`](https://pizzeria-mama-mia-hito5.vercel.app/register) · [`/login`](https://pizzeria-mama-mia-hito5.vercel.app/login) · [`/cart`](https://pizzeria-mama-mia-hito5.vercel.app/cart) · [`/pizza/p001`](https://pizzeria-mama-mia-hito5.vercel.app/pizza/p001) · [`/profile`](https://pizzeria-mama-mia-hito5.vercel.app/profile) · [`/404`](https://pizzeria-mama-mia-hito5.vercel.app/404)
-- Backend / API (Render): **[pizzeria-backend-laiv.onrender.com](https://pizzeria-backend-laiv.onrender.com/api/pizzas)**
-  - `GET /api/pizzas` → [listado de pizzas](https://pizzeria-backend-laiv.onrender.com/api/pizzas)
-  - `GET /api/pizzas/p001` → [detalle de una pizza](https://pizzeria-backend-laiv.onrender.com/api/pizzas/p001)
-- Repositorio: **[cesarscl/Pizzeria-Mama-Mia-Hito5](https://github.com/cesarscl/Pizzeria-Mama-Mia-Hito5)**
+- **Demo (Vercel):** [pizzeria-mama-mia-hito6.vercel.app](https://pizzeria-mama-mia-hito6.vercel.app/)
+- **Backend / API (Render):** [pizzeria-backend-laiv.onrender.com/api/pizzas](https://pizzeria-backend-laiv.onrender.com/api/pizzas)
+- **Repositorio:** [cesarscl/Pizzeria-Mama-Mia-Hito6](https://github.com/cesarscl/Pizzeria-Mama-Mia-Hito6)
 
-> El backend está en el plan gratuito de Render podria estar inactivo al mometo de la evaluacion
+> El backend está en el plan gratuito de Render y podría estar inactivo al momento de la evaluación: la primera carga puede tardar cerca de un minuto.
 
-## Descripción
+## Hito 6: carrito con Context API
 
-Landing page de una pizzería desarrollada con **React + Vite**. Muestra un menú de pizzas, un navbar con estado simulado de sesión y un footer institucional.
+El carrito es un estado global (`CartContext`) que parte vacío:
 
-En el **Hito 2** se agregan los formularios de **registro** y **login**, manejados con el hook `useState` y el evento `onSubmit`, que validan los datos ingresados y muestran un mensaje de éxito o de error. La navegación entre vistas se controla con un estado en `App.jsx`.
+- [x] `CartProvider` maneja el carrito: `addToCart`, `increase`, `decrease`, `removeFromCart` y `total`.
+- [x] El **Navbar** muestra el total del carrito desde el contexto.
+- [x] El botón **Añadir** de cada tarjeta en Home agrega la pizza al carrito.
+- [x] La página **Cart** muestra las pizzas agregadas; `+` suma, `-` resta (en 0 se elimina) y 🗑 la quita.
+- [x] El total es el mismo en Cart y en el Navbar.
 
-En el **Hito 3** el menú pasa a renderizarse dinámicamente con `.map()` desde el archivo `pizzas.js`, y se agrega un **carrito de compras** simulado que permite aumentar y disminuir cantidades y calcula el total de la compra.
+## Hitos anteriores
 
-En el **Hito 4** las pizzas se obtienen desde una **API** (backend del material de apoyo) usando `useEffect` y `fetch`. `Home` carga el listado completo y el nuevo componente `Pizza` muestra el detalle de una pizza (por ahora fija: `p001`), al que se llega con el botón **Ver Más** de cualquier tarjeta.
+| Hito | Contenido |
+|---|---|
+| 1 | Componentes y props: Navbar, Header, CardPizza y Footer |
+| 2 | Formularios de Register y Login con validaciones (`useState`) |
+| 3 | Menú con `.map()` y carrito con `+` / `-` y total |
+| 4 | Pizzas desde la API con `useEffect` y `fetch` (Home y detalle `p001`) |
+| 5 | Rutas con React Router, carpeta `pages`, Profile y NotFound |
 
-En el **Hito 5** la navegación pasa a hacerse con **React Router**: cada vista tiene su propia URL, los componentes de página se trasladan a la carpeta `pages`, y se agregan las páginas **Profile** y **NotFound** (404).
-
-En el **Hito 6** el carrito pasa a ser un **estado global** con **Context API** (`CartContext`). El carrito parte vacío: el usuario agrega pizzas con el botón **Añadir** de cada tarjeta en Home (o desde el detalle de la pizza), y en `/cart` puede aumentar o disminuir cantidades. El total se calcula en el contexto, así que el Navbar y el carrito muestran siempre el mismo monto.
+## Rutas
 
 | Ruta | Página |
 |---|---|
@@ -35,160 +40,40 @@ En el **Hito 6** el carrito pasa a ser un **estado global** con **Context API** 
 | `/cart` | Cart |
 | `/pizza/p001` | Pizza |
 | `/profile` | Profile |
-| `/404` y cualquier ruta inexistente | NotFound |
+| `/404` y rutas inexistentes | NotFound |
 
-> El botón **🛒 Total** del Navbar lleva a `/cart` y muestra el total real del carrito.
-
-## Componentes
+## Estructura
 
 ```
 src/
-├── main.jsx            → <CartProvider> + <BrowserRouter> + <App />
-├── App.jsx             → Navbar + <Routes> + Footer
-├── components/
-│   ├── Navbar.jsx      → menú con <Link>, total del carrito (context) y `token`
-│   ├── Header.jsx      → título y descripción de la pizzería
-│   ├── CardPizza.jsx   → tarjeta de pizza (vía props)
-│   ├── Message.jsx     → alerta de éxito/error
-│   └── Footer.jsx      → derechos reservados
-├── context/
-│   ├── CartContext.js  → createContext del carrito y hook useCart
-│   └── CartProvider.jsx → estado del carrito, addToCart, increase, decrease, removeFromCart y total
-├── pages/
-│   ├── Home.jsx        → listado de pizzas desde la API (Header + CardPizza x6)
-│   ├── Pizza.jsx       → detalle de una pizza desde la API
-│   ├── Register.jsx    → formulario de registro (usa Message)
-│   ├── Login.jsx       → formulario de login (usa Message)
-│   ├── Cart.jsx        → carrito de compras desde el context: cantidades y total
-│   ├── Profile.jsx     → email del usuario y botón cerrar sesión
-│   └── NotFound.jsx    → página 404 con enlace al inicio
+├── main.jsx        → CartProvider > BrowserRouter > App
+├── App.jsx         → Navbar + Routes + Footer
+├── components/     → Navbar, Header, CardPizza, Message, Footer
+├── context/        → CartContext.js (contexto + useCart), CartProvider.jsx
+├── pages/          → Home, Pizza, Register, Login, Cart, Profile, NotFound
 ├── utils/helpers.js
 └── pizzas.js
 ```
 
-- **main.jsx**: envuelve la aplicación con `CartProvider` y, dentro, con `BrowserRouter` de `react-router-dom`.
-- **context/CartContext.js**: crea el contexto con `createContext` y exporta el hook `useCart` para consumirlo.
-- **context/CartProvider.jsx**: mantiene el carrito con `useState` y expone `cart`, `addToCart` (agrega una pizza o suma 1 si ya está), `increase`, `decrease` (al llegar a 0 la elimina), `removeFromCart` (quita la pizza completa) y `total` (calculado con `reduce`).
-- **App.jsx**: define las rutas con `Routes` y `Route`. La ruta `*` muestra `NotFound` para cualquier URL que no exista.
-- **pizzas.js**: datos locales. Exporta `pizzas` (desde el Hito 4 solo se usa para las imágenes de respaldo) y `pizzaCart` (simulación del carrito del Hito 3; desde el Hito 6 ya no se usa).
-- **Navbar.jsx**: enlaces con `Link` a Home, Profile, Login y Register, más el botón **🛒 Total** que lleva a `/cart`. Con `token` en `false` muestra Login/Register; con `true`, Logout. El enlace a Profile está siempre visible mientras la autenticación sea estática. El total se obtiene del `CartContext` y se formatea con separador de miles usando `toLocaleString`.
-- **Profile.jsx**: muestra un email fijo (`usuario@pizzeria.cl`) y un botón Cerrar sesión, ambos estáticos por ahora.
-- **NotFound.jsx**: página 404 temática con un `Link` que vuelve a `/`.
-- **Home.jsx**: con `useEffect` y `fetch` consume `GET /api/pizzas`, guarda el resultado en el estado `pizzas` y renderiza un `CardPizza` por cada una. Muestra un mensaje mientras carga y otro si el backend no responde.
-- **Pizza.jsx**: con `useEffect` y `fetch` consume `GET /api/pizzas/p001` y muestra nombre, precio, ingredientes, imagen y descripción. El botón Añadir agrega la pizza al carrito.
-- **CardPizza.jsx**: recibe `id`, `name`, `price`, `ingredients` e `img` por props, y renderiza un `<li>` por cada ingrediente. El botón Ver Más es un `Link` a `/pizza/p001` y el botón Añadir llama a `addToCart` del contexto.
-- **Cart.jsx**: obtiene `cart`, `increase`, `decrease`, `removeFromCart` y `total` del `CartContext` y muestra imagen, nombre, precio y cantidad de cada pizza agregada. Los botones `+` y `-` cambian la cantidad (al llegar a 0, la pizza se elimina) y el botón 🗑 quita la pizza del carrito de una vez. Si está vacío, muestra un aviso. El botón Pagar aún no tiene funcionalidad.
-- **Register.jsx**: estados `email`, `password` y `confirmPassword`; valida campos obligatorios, largo mínimo de 6 caracteres y que ambas contraseñas coincidan.
-- **Login.jsx**: estados `email` y `password`; valida campos obligatorios y largo mínimo de 6 caracteres.
-- **Message.jsx**: alerta de Bootstrap (verde o roja) que solo se muestra cuando hay un mensaje.
-- **utils/helpers.js**: `formatPrice` (reutilizada en `Navbar`, `CardPizza`, `Cart` y `Pizza`), `API_URL` (URL del backend) y `handleImgError` (imagen de respaldo).
-
-## Tecnologías
-
-- [React 19](https://react.dev/)
-- [Vite](https://vitejs.dev/)
-- [React Router 7](https://reactrouter.com/) (`react-router-dom`)
-- [Bootstrap 5](https://getbootstrap.com/)
-
-## Cómo correr el proyecto en local
-
-Por defecto el frontend consulta el backend publicado en Render, así que basta con los pasos del frontend (más abajo).
-
-Para usar en cambio el backend local del material de apoyo ("Material de apoyo - Backend Pizzas"), levántalo en otra terminal:
+## Cómo correrlo en local
 
 ```bash
-cd simple-api-backend-nodejs-express-fs-json-jwt-main
-npm install
-npm start   # queda en http://localhost:5000
-```
-
-> En macOS, si aparece `EADDRINUSE` en el puerto 5000, desactiva **Receptor AirPlay** en Ajustes del Sistema → General → AirDrop y Handoff.
-
-y crea en el frontend un archivo `.env.local` con:
-
-```bash
-VITE_API_URL=http://localhost:5000
-```
-
-Luego, en el frontend:
-
-```bash
-git clone https://github.com/cesarscl/Pizzeria-Mama-Mia-Hito5.git
-cd Pizzeria-Mama-Mia-Hito5
+git clone https://github.com/cesarscl/Pizzeria-Mama-Mia-Hito6.git
+cd Pizzeria-Mama-Mia-Hito6
 npm install
 npm run dev
 ```
 
-Abre [http://localhost:5173](http://localhost:5173) en tu navegador.
+Abre [http://localhost:5173](http://localhost:5173). Por defecto usa el backend de Render; para usar el backend local del material de apoyo (`npm start`, puerto 5000), crea un archivo `.env.local` con `VITE_API_URL=http://localhost:5000`.
 
+## Notas
 
-## Requerimientos del Hito 1
+- Las imágenes del material de apoyo (Firebase) responden error 402; se reemplazan por fotos de [Unsplash](https://unsplash.com/).
+- `vercel.json` permite entrar directo o recargar en cualquier ruta en Vercel.
 
-- [x] `App.jsx` muestra `Navbar`, `Home` y `Footer`
-- [x] `Header.jsx` con título y descripción, llamado desde `Home.jsx`
-- [x] `Navbar.jsx` con menú Home, Profile, Logout, Login, Register y Total
-- [x] Botones Home y Total visibles independientemente del `token`
-- [x] `CardPizza.jsx` recibe nombre, precio, ingredientes e imagen por props
-- [x] `Footer.jsx` con el texto de derechos reservados
+## Tecnologías
 
-## Requerimientos del Hito 2
-
-- [x] `Register.jsx` con campos Email, Contraseña y Confirmar contraseña
-  - Todos los campos obligatorios
-  - Contraseña de al menos 6 caracteres
-  - Contraseña y confirmación deben coincidir
-  - Muestra mensaje de éxito o de error al enviar
-- [x] `Login.jsx` con campos Email y Contraseña
-  - Todos los campos obligatorios
-  - Contraseña de al menos 6 caracteres
-  - Muestra mensaje de éxito o de error al enviar
-- [x] Los botones Home, Login y Register del `Navbar` cambian la vista mostrada en `App.jsx` (estado `view`; desde el Hito 5 se reemplazó por React Router)
-
-## Requerimientos del Hito 3
-
-- [x] `Home.jsx` recorre el array `pizzas` y renderiza un `CardPizza` por cada pizza (6 tarjetas)
-- [x] `CardPizza.jsx` muestra la información de cada pizza utilizando props
-- [x] `CardPizza.jsx` itera por los ingredientes y renderiza un `<li>` por cada uno
-- [x] `Cart.jsx` recorre `pizzaCart` y muestra imagen, nombre, precio y cantidad de cada pizza
-- [x] Botones para aumentar y disminuir la cantidad; con cantidad 0 la pizza se elimina del carrito
-- [x] Cálculo del total de la compra y botón Pagar (sin funcionalidad por ahora)
-
-## Requerimientos del Hito 4
-
-- [x] `Home.jsx` consume la API de pizzas y renderiza las tarjetas
-- [x] `Home.jsx` utiliza el hook `useEffect` para consumir la API
-- [x] `Pizza.jsx` consume la API (`/api/pizzas/p001`) y renderiza la información de la pizza
-- [x] `Pizza.jsx` utiliza el hook `useEffect` para consumir la API
-- [x] `Pizza.jsx` muestra nombre, precio, ingredientes, imagen y descripción
-
-## Requerimientos del Hito 5
-
-- [x] Instalación de `react-router-dom` y configuración con `BrowserRouter` en `main.jsx`
-- [x] `Home`, `Register`, `Login`, `Cart` y `Pizza` trasladados a la carpeta `pages`
-- [x] Rutas `/`, `/register`, `/login`, `/cart`, `/pizza/p001`, `/profile` y `/404`
-- [x] `NotFound` se muestra en cualquier ruta inexistente y tiene un enlace a `/`
-- [x] `Profile` muestra el email del usuario y un botón para cerrar sesión (estáticos)
-- [x] `Navbar` con enlaces `Link` a las rutas; el botón **🛒 Total** redirige a `/cart`
-
-## Requerimientos del Hito 6
-
-- [x] Context (`CartContext` + `CartProvider`) que maneja el carrito de compras de la aplicación
-- [x] El `Navbar` consume el contexto para mostrar el precio total del carrito
-- [x] El botón **Añadir** de cada tarjeta en Home agrega la pizza al carrito mediante el contexto
-- [x] La página `Cart` muestra las pizzas agregadas (desde el contexto), permite agregar (`+`) y eliminar productos (`-` hasta 0, o 🗑 para quitarlo completo)
-- [x] El total se calcula en el contexto y es el mismo en `Cart` y en el `Navbar`
-
-### Notas de implementación
-
-- El contexto se separa en `CartContext.js` (contexto y hook) y `CartProvider.jsx` (componente), para cumplir la regla `react-refresh/only-export-components` del linter.
-- `CartProvider` envuelve a `BrowserRouter`, como indica la tutoría de Context.
-- El carrito parte vacío; el requerimiento opcional (llevar el fetch de pizzas a un Context) no se implementó.
-
-- `vercel.json` redirige todas las rutas a `index.html`, para que en Vercel funcione entrar directo o recargar en rutas como `/cart` o `/profile`.
-
-- La URL del backend se define en `API_URL`: por defecto el backend publicado en Render ([pizzeria-backend-laiv.onrender.com](https://pizzeria-backend-laiv.onrender.com/api/pizzas)), o el valor de la variable de entorno `VITE_API_URL` si está definida.
-- Las imágenes que entrega el backend (Firebase) responden error 402; si una imagen falla, `onError` la reemplaza por la imagen de respaldo de `pizzas.js` según el `id`.
-- Las URLs de imágenes del material de apoyo responden error 402, por lo que en `pizzas.js` se reemplazaron por fotos de [Unsplash](https://unsplash.com/).
+React 19 · Vite · React Router 7 · Bootstrap 5
 
 ## Autor
 
