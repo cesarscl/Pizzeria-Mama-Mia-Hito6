@@ -1,24 +1,8 @@
-import { useState } from "react"
-import { pizzaCart } from "../pizzas"
-import { formatPrice } from "../utils/helpers"
+import { useCart } from "../context/CartContext"
+import { formatPrice, handleImgError } from "../utils/helpers"
 
 const Cart = () => {
-  const [cart, setCart] = useState(pizzaCart)
-
-  const increase = (id) => {
-    setCart(cart.map((pizza) => (pizza.id === id ? { ...pizza, count: pizza.count + 1 } : pizza)))
-  }
-
-  // Al llegar a 0 la pizza se elimina del carrito
-  const decrease = (id) => {
-    setCart(
-      cart
-        .map((pizza) => (pizza.id === id ? { ...pizza, count: pizza.count - 1 } : pizza))
-        .filter((pizza) => pizza.count > 0)
-    )
-  }
-
-  const total = cart.reduce((acc, pizza) => acc + pizza.price * pizza.count, 0)
+  const { cart, increase, decrease, removeFromCart, total } = useCart()
 
   return (
     <main className="container my-5" style={{ maxWidth: "640px" }}>
@@ -36,12 +20,21 @@ const Cart = () => {
               height="45"
               className="rounded"
               style={{ objectFit: "cover" }}
+              onError={handleImgError(pizza.id)}
             />
             <span className="text-capitalize flex-grow-1">{pizza.name}</span>
             <span className="fw-semibold">${formatPrice(pizza.price)}</span>
             <button className="btn btn-outline-danger btn-sm" onClick={() => decrease(pizza.id)}>-</button>
             <span className="fw-bold" style={{ minWidth: "1.5rem", textAlign: "center" }}>{pizza.count}</span>
             <button className="btn btn-outline-primary btn-sm" onClick={() => increase(pizza.id)}>+</button>
+            <button
+              className="btn btn-outline-secondary btn-sm"
+              onClick={() => removeFromCart(pizza.id)}
+              aria-label={`Eliminar ${pizza.name} del carrito`}
+              title="Eliminar del carrito"
+            >
+              🗑
+            </button>
           </li>
         ))}
       </ul>

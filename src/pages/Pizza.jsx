@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { useCart } from "../context/CartContext"
 import { API_URL, formatPrice, handleImgError } from "../utils/helpers"
 
 // Por ahora el id es fijo; en el siguiente hito será dinámico
@@ -7,6 +8,7 @@ const PIZZA_ID = "p001"
 const Pizza = () => {
   const [pizza, setPizza] = useState(null)
   const [error, setError] = useState("")
+  const { addToCart } = useCart()
 
   // Consume la API para obtener una sola pizza al montar el componente
   useEffect(() => {
@@ -62,7 +64,7 @@ const Pizza = () => {
 
               <div className="d-flex justify-content-between align-items-center mt-auto">
                 <p className="fs-4 fw-bold mb-0">Precio: ${formatPrice(pizza.price)}</p>
-                <button className="btn btn-dark">Añadir 🛒</button>
+                <button className="btn btn-dark" onClick={() => addToCart(pizza)}>Añadir 🛒</button>
               </div>
             </div>
           </div>

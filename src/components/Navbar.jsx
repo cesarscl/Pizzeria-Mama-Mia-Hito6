@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom"
+import { useCart } from "../context/CartContext"
 import { formatPrice } from "../utils/helpers"
 
 const Navbar = () => {
-  const total = 25000
+  const { total } = useCart()
   const token = false
 
   return (

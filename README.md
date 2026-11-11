@@ -1,6 +1,6 @@
 # Pizzería Mamma Mia!
 
-Hito 5 - React Router I | Desafío Latam - Fullstack JS
+Hito 6 - Context API | Desafío Latam - Fullstack JS
 
 ## Accesos al proyecto
 
@@ -25,6 +25,8 @@ En el **Hito 4** las pizzas se obtienen desde una **API** (backend del material 
 
 En el **Hito 5** la navegación pasa a hacerse con **React Router**: cada vista tiene su propia URL, los componentes de página se trasladan a la carpeta `pages`, y se agregan las páginas **Profile** y **NotFound** (404).
 
+En el **Hito 6** el carrito pasa a ser un **estado global** con **Context API** (`CartContext`). El carrito parte vacío: el usuario agrega pizzas con el botón **Añadir** de cada tarjeta en Home (o desde el detalle de la pizza), y en `/cart` puede aumentar o disminuir cantidades. El total se calcula en el contexto, así que el Navbar y el carrito muestran siempre el mismo monto.
+
 | Ruta | Página |
 |---|---|
 | `/` | Home |
@@ -35,42 +37,47 @@ En el **Hito 5** la navegación pasa a hacerse con **React Router**: cada vista 
 | `/profile` | Profile |
 | `/404` y cualquier ruta inexistente | NotFound |
 
-> El botón **🛒 Total** del Navbar lleva a `/cart`. El monto de ese botón sigue siendo un valor fijo; el total real se muestra dentro del carrito.
+> El botón **🛒 Total** del Navbar lleva a `/cart` y muestra el total real del carrito.
 
 ## Componentes
 
 ```
 src/
-├── main.jsx            → envuelve <App /> con <BrowserRouter>
+├── main.jsx            → <CartProvider> + <BrowserRouter> + <App />
 ├── App.jsx             → Navbar + <Routes> + Footer
 ├── components/
-│   ├── Navbar.jsx      → menú con <Link>, variables `total` y `token`
+│   ├── Navbar.jsx      → menú con <Link>, total del carrito (context) y `token`
 │   ├── Header.jsx      → título y descripción de la pizzería
 │   ├── CardPizza.jsx   → tarjeta de pizza (vía props)
 │   ├── Message.jsx     → alerta de éxito/error
 │   └── Footer.jsx      → derechos reservados
+├── context/
+│   ├── CartContext.js  → createContext del carrito y hook useCart
+│   └── CartProvider.jsx → estado del carrito, addToCart, increase, decrease, removeFromCart y total
 ├── pages/
 │   ├── Home.jsx        → listado de pizzas desde la API (Header + CardPizza x6)
 │   ├── Pizza.jsx       → detalle de una pizza desde la API
 │   ├── Register.jsx    → formulario de registro (usa Message)
 │   ├── Login.jsx       → formulario de login (usa Message)
-│   ├── Cart.jsx        → carrito de compras: cantidades y total
+│   ├── Cart.jsx        → carrito de compras desde el context: cantidades y total
 │   ├── Profile.jsx     → email del usuario y botón cerrar sesión
 │   └── NotFound.jsx    → página 404 con enlace al inicio
 ├── utils/helpers.js
 └── pizzas.js
 ```
 
-- **main.jsx**: envuelve la aplicación con `BrowserRouter` de `react-router-dom`.
+- **main.jsx**: envuelve la aplicación con `CartProvider` y, dentro, con `BrowserRouter` de `react-router-dom`.
+- **context/CartContext.js**: crea el contexto con `createContext` y exporta el hook `useCart` para consumirlo.
+- **context/CartProvider.jsx**: mantiene el carrito con `useState` y expone `cart`, `addToCart` (agrega una pizza o suma 1 si ya está), `increase`, `decrease` (al llegar a 0 la elimina), `removeFromCart` (quita la pizza completa) y `total` (calculado con `reduce`).
 - **App.jsx**: define las rutas con `Routes` y `Route`. La ruta `*` muestra `NotFound` para cualquier URL que no exista.
-- **pizzas.js**: datos locales. Exporta `pizzas` (desde el Hito 4 solo se usa para las imágenes de respaldo) y `pizzaCart` (simulación del carrito).
-- **Navbar.jsx**: enlaces con `Link` a Home, Profile, Login y Register, más el botón **🛒 Total** que lleva a `/cart`. Con `token` en `false` muestra Login/Register; con `true`, Logout. El enlace a Profile está siempre visible mientras la autenticación sea estática. El total se formatea con separador de miles usando `toLocaleString`.
+- **pizzas.js**: datos locales. Exporta `pizzas` (desde el Hito 4 solo se usa para las imágenes de respaldo) y `pizzaCart` (simulación del carrito del Hito 3; desde el Hito 6 ya no se usa).
+- **Navbar.jsx**: enlaces con `Link` a Home, Profile, Login y Register, más el botón **🛒 Total** que lleva a `/cart`. Con `token` en `false` muestra Login/Register; con `true`, Logout. El enlace a Profile está siempre visible mientras la autenticación sea estática. El total se obtiene del `CartContext` y se formatea con separador de miles usando `toLocaleString`.
 - **Profile.jsx**: muestra un email fijo (`usuario@pizzeria.cl`) y un botón Cerrar sesión, ambos estáticos por ahora.
 - **NotFound.jsx**: página 404 temática con un `Link` que vuelve a `/`.
 - **Home.jsx**: con `useEffect` y `fetch` consume `GET /api/pizzas`, guarda el resultado en el estado `pizzas` y renderiza un `CardPizza` por cada una. Muestra un mensaje mientras carga y otro si el backend no responde.
-- **Pizza.jsx**: con `useEffect` y `fetch` consume `GET /api/pizzas/p001` y muestra nombre, precio, ingredientes, imagen y descripción. El botón Añadir aún no tiene funcionalidad.
-- **CardPizza.jsx**: recibe `id`, `name`, `price`, `ingredients` e `img` por props, y renderiza un `<li>` por cada ingrediente. El botón Ver Más es un `Link` a `/pizza/p001`.
-- **Cart.jsx**: guarda `pizzaCart` en el estado `cart` y muestra imagen, nombre, precio y cantidad de cada pizza. Los botones `+` y `-` cambian la cantidad y, al llegar a 0, la pizza se elimina del carrito. El total se calcula con `reduce`. El botón Pagar aún no tiene funcionalidad.
+- **Pizza.jsx**: con `useEffect` y `fetch` consume `GET /api/pizzas/p001` y muestra nombre, precio, ingredientes, imagen y descripción. El botón Añadir agrega la pizza al carrito.
+- **CardPizza.jsx**: recibe `id`, `name`, `price`, `ingredients` e `img` por props, y renderiza un `<li>` por cada ingrediente. El botón Ver Más es un `Link` a `/pizza/p001` y el botón Añadir llama a `addToCart` del contexto.
+- **Cart.jsx**: obtiene `cart`, `increase`, `decrease`, `removeFromCart` y `total` del `CartContext` y muestra imagen, nombre, precio y cantidad de cada pizza agregada. Los botones `+` y `-` cambian la cantidad (al llegar a 0, la pizza se elimina) y el botón 🗑 quita la pizza del carrito de una vez. Si está vacío, muestra un aviso. El botón Pagar aún no tiene funcionalidad.
 - **Register.jsx**: estados `email`, `password` y `confirmPassword`; valida campos obligatorios, largo mínimo de 6 caracteres y que ambas contraseñas coincidan.
 - **Login.jsx**: estados `email` y `password`; valida campos obligatorios y largo mínimo de 6 caracteres.
 - **Message.jsx**: alerta de Bootstrap (verde o roja) que solo se muestra cuando hay un mensaje.
@@ -163,7 +170,19 @@ Abre [http://localhost:5173](http://localhost:5173) en tu navegador.
 - [x] `Profile` muestra el email del usuario y un botón para cerrar sesión (estáticos)
 - [x] `Navbar` con enlaces `Link` a las rutas; el botón **🛒 Total** redirige a `/cart`
 
+## Requerimientos del Hito 6
+
+- [x] Context (`CartContext` + `CartProvider`) que maneja el carrito de compras de la aplicación
+- [x] El `Navbar` consume el contexto para mostrar el precio total del carrito
+- [x] El botón **Añadir** de cada tarjeta en Home agrega la pizza al carrito mediante el contexto
+- [x] La página `Cart` muestra las pizzas agregadas (desde el contexto), permite agregar (`+`) y eliminar productos (`-` hasta 0, o 🗑 para quitarlo completo)
+- [x] El total se calcula en el contexto y es el mismo en `Cart` y en el `Navbar`
+
 ### Notas de implementación
+
+- El contexto se separa en `CartContext.js` (contexto y hook) y `CartProvider.jsx` (componente), para cumplir la regla `react-refresh/only-export-components` del linter.
+- `CartProvider` envuelve a `BrowserRouter`, como indica la tutoría de Context.
+- El carrito parte vacío; el requerimiento opcional (llevar el fetch de pizzas a un Context) no se implementó.
 
 - `vercel.json` redirige todas las rutas a `index.html`, para que en Vercel funcione entrar directo o recargar en rutas como `/cart` o `/profile`.
 
@@ -173,4 +192,4 @@ Abre [http://localhost:5173](http://localhost:5173) en tu navegador.
 
 ## Autor
 
-Cesar — Desafío Latam, Fullstack JS, Módulo 04
+Cesar Ormeño — Desafío Latam, Fullstack JS, Módulo 04

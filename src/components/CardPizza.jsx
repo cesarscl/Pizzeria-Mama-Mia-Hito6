@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom"
+import { useCart } from "../context/CartContext"
 import { formatPrice, handleImgError } from "../utils/helpers"
 
 const CardPizza = ({ id, name, price, ingredients, img }) => {
+  const { addToCart } = useCart()
+
   return (
     <div className="col-12 col-md-6 col-lg-4 mb-4">
       <div className="card h-100 shadow-sm">
@@ -31,7 +34,9 @@ const CardPizza = ({ id, name, price, ingredients, img }) => {
             <Link to="/pizza/p001" className="btn btn-outline-secondary btn-sm">
               Ver Más 👀
             </Link>
-            <button className="btn btn-dark btn-sm">Añadir 🛒</button>
+            <button className="btn btn-dark btn-sm" onClick={() => addToCart({ id, name, price, img })}>
+              Añadir 🛒
+            </button>
           </div>
         </div>
       </div>
